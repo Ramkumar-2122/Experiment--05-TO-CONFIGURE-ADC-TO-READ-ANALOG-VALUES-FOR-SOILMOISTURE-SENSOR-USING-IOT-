@@ -1,5 +1,6 @@
 # EXPERIMENT-05-SOIL-MOISTURE-SENSOR-INTERFACE-TO-IOT-DEVELOPMENT-BOARD
-
+## NAME:RAMKUMAR S
+## REGISTER NUMBER:212223220085
 ## Aim: 
 
 To Interface a Analog Input  (soil moisture sensor) to ARM IOT development board and write a  program to obtain  the data on the com port 
@@ -107,6 +108,7 @@ GND is the ground pin.
 
 
 ## STM 32 CUBE PROGRAM :
+```c
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -128,19 +130,10 @@ GND is the ground pin.
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stdio.h"
-#include "stdint.h"
-
-#if defined (GNUC)
-/* With GCC, small printf (retarget) uses __io_putchar */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-/* With other compilers, define the same prototype name to keep code portable */
+#if defined(__GNUC__)
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #endif
-
-uint16_t readValue;
-
-/* Private includes ----------------------------------------------------------*/
+uint16_t readValue;/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -221,39 +214,22 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-      /* Start ADC conversion */
-      HAL_ADC_Start(&hadc);
-      /* Wait for conversion complete (blocking) */
-      HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-      /* Read the converted value */
-      readValue = HAL_ADC_GetValue(&hadc);
-      printf("Read value: %u\n", (unsigned)readValue);
-      HAL_ADC_Stop(&hadc);
-
-      /* Convert ADC 12-bit value (0..4095) to moisture percentage:
-         soilMoisture% = 100 - (readValue / 4095.0 * 100)
-         clamp to 0..100 */
-      float moisture_f = 100.0f - ((float)readValue / 4095.0f) * 100.0f;
-      if (moisture_f < 0.0f) moisture_f = 0.0f;
-      if (moisture_f > 100.0f) moisture_f = 100.0f;
-      uint32_t soilmoist = (uint32_t)(moisture_f + 0.5f); /* rounded */
-
-      printf("Soil Moisture: %lu %%\n", (unsigned long)soilmoist);
-
-      HAL_Delay(1000);
-  }
-  /* USER CODE END 3 */
+   {
+ 	  HAL_ADC_Start(&hadc);
+ 	          HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+ 	     readValue=HAL_ADC_GetValue(&hadc);
+ 	   printf("Read value : %d\n", readValue);
+ 	   HAL_ADC_Stop(&hadc);
+ 	   uint32_t soilmoist = 100 -(readValue/40.96);
+ 	    printf("Soil moisture : %ld %%\n",soilmoist);
+ 	    HAL_Delay(1000);
+   }
 }
-
-/* Retarget printf to UART */
-PUTCHAR_PROTOTYPE
-{
-    /* send single byte over UART; convert to uint8_t for HAL call */
-    uint8_t ch8 = (uint8_t)ch;
-    HAL_UART_Transmit(&huart2, &ch8, 1, 0xFFFF);
-    return ch;
-}
+ PUTCHAR_PROTOTYPE
+ {
+ 	HAL_UART_Transmit(&huart2,(uint8_t*)&ch, 1, 0xFFFF);
+ 	return ch;
+ }
 
 /**
   * @brief System Clock Configuration
@@ -317,8 +293,6 @@ static void MX_ADC_Init(void)
 
   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
   */
-  /* NOTE: Some HAL versions use ADC1, some use ADC. Ensure your device header matches.
-     If your project generated hadc.Instance = ADC, keep that. If your MCU uses ADC1, adjust accordingly. */
   hadc.Instance = ADC;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV1;
   hadc.Init.Resolution = ADC_RESOLUTION_12B;
@@ -327,7 +301,7 @@ static void MX_ADC_Init(void)
   hadc.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc.Init.LowPowerAutoWait = DISABLE;
   hadc.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc.Init.ContinuousConvMode = ENABLE;
+  hadc.Init.ContinuousConvMode = DISABLE;
   hadc.Init.NbrOfConversion = 1;
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -443,6 +417,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
@@ -459,13 +434,15 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+```
+## Output of Soil Sensor with Borad:
+<img width="664" height="412" alt="image" src="https://github.com/user-attachments/assets/0fd86349-71be-4d8e-9a77-f16627d46bd7" />
 
 
 ## Output screen shots on serial monitor   :
-![WhatsApp Image 2025-10-17 at 09 52 48_86cf2f3f](https://github.com/user-attachments/assets/91d82274-8c2d-4664-9458-962c157a92fc)
- 
- 
- 
- 
+ <img width="1613" height="856" alt="image" src="https://github.com/user-attachments/assets/da4ee590-a565-41d9-a3f1-26090ca3ede0" />
+
+
+
 ## Result :
 Interfacing a Analog Input (soil moisture sensor) with ARM microcontroller based IOT development is executed and the results visualized on serial monitor 
